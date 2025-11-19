@@ -9,7 +9,7 @@
         tbody.innerHTML = '';
 
         if (products.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" class="empty">ยังไม่มีสินค้า</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="empty">ยังไม่มีสินค้า</td></tr>`;
             return;
         }
 
@@ -18,6 +18,9 @@
             tr.innerHTML = `
         <td>
           <input type="text" value="${p.name}" class="small-input-name" style="width: 100%;">
+        </td>
+        <td>
+          <input type="text" value="${p.category || ''}" class="small-input-category" style="width: 120px;">
         </td>
         <td>
           <input type="number" value="${p.price}" class="small-input-price" style="width: 80px;">
@@ -29,18 +32,20 @@
       `;
 
             const inputName = tr.querySelector('.small-input-name');
+            const inputCategory = tr.querySelector('.small-input-category');
             const inputPrice = tr.querySelector('.small-input-price');
             const btnSave = tr.querySelector('.btn-outline');
             const btnDelete = tr.querySelector('.btn-danger');
 
             btnSave.addEventListener('click', () => {
                 const newName = inputName.value.trim();
+                const newCategory = inputCategory.value.trim() || 'ทั่วไป';
                 const newPrice = Number(inputPrice.value);
                 if (!newName || isNaN(newPrice) || newPrice < 0) {
-                    alert('กรุณากรอกชื่อและราคาสินค้าให้ถูกต้อง');
+                    alert('กรุณากรอกชื่อ หมวดหมู่ และราคาสินค้าให้ถูกต้อง');
                     return;
                 }
-                ProductStore.update(p.id, { name: newName, price: newPrice });
+                ProductStore.update(p.id, { name: newName, price: newPrice, category: newCategory });
                 alert('บันทึกสินค้าเรียบร้อย');
             });
 
@@ -57,20 +62,23 @@
     function handleAddProduct() {
         const nameInput = document.getElementById('newProductName');
         const priceInput = document.getElementById('newProductPrice');
+        const categoryInput = document.getElementById('newProductCategory');
 
         const name = nameInput.value.trim();
         const price = Number(priceInput.value);
+        const category = (categoryInput.value || '').trim() || 'ทั่วไป';
 
         if (!name || isNaN(price) || price < 0) {
             alert('กรุณากรอกชื่อสินค้าและราคาที่ถูกต้อง');
             return;
         }
 
-        ProductStore.add({ name, price });
+        ProductStore.add({ name, price, category });
         renderProductsAdmin();
 
         nameInput.value = '';
         priceInput.value = '';
+        categoryInput.value = '';
     }
 
     function init() {

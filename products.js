@@ -16,11 +16,11 @@
         // default products
         if (productsCache.length === 0) {
             productsCache = [
-                { id: 1, name: 'Americano (ร้อน)', price: 60 },
-                { id: 2, name: 'Latte (เย็น)', price: 80 },
-                { id: 3, name: 'Cappuccino (เย็น)', price: 85 },
-                { id: 4, name: 'ชาเขียวเย็น', price: 75 },
-                { id: 5, name: 'เค้กช็อคโกแลต', price: 95 }
+                { id: 1, name: 'Americano (ร้อน)', price: 60, category: 'กาแฟ' },
+                { id: 2, name: 'Latte (เย็น)', price: 80, category: 'กาแฟ' },
+                { id: 3, name: 'Cappuccino (เย็น)', price: 85, category: 'กาแฟ' },
+                { id: 4, name: 'ชาเขียวเย็น', price: 75, category: 'ชา/นม' },
+                { id: 5, name: 'เค้กช็อคโกแลต', price: 95, category: 'ของหวาน' }
             ];
             save();
         }
@@ -51,7 +51,8 @@
         const newProd = {
             id: getNextId(),
             name: product.name,
-            price: Number(product.price) || 0
+            price: Number(product.price) || 0,
+            category: product.category || 'ทั่วไป'
         };
         prods.push(newProd);
         productsCache = prods;
@@ -66,6 +67,7 @@
 
         if (typeof data.name === 'string') p.name = data.name;
         if (data.price != null) p.price = Number(data.price);
+        if (data.category != null) p.category = data.category;
 
         productsCache = prods;
         save();

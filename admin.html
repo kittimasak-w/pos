@@ -41,14 +41,17 @@
                         <label>ชื่อสินค้า</label>
                         <input type="text" id="newProductName" placeholder="เช่น Latte เย็น">
                     </div>
-
                     <div class="field">
                         <label>ราคา (บาท)</label>
                         <input type="number" id="newProductPrice" placeholder="เช่น 89">
                     </div>
-
+                    <div class="field">
+                        <label>หมวดหมู่</label>
+                        <input type="text" id="newProductCategory" placeholder="เช่น กาแฟ, ชา/นม, ของหวาน">
+                    </div>
                     <button class="btn btn-primary" id="btnAddProduct">เพิ่มสินค้า</button>
                 </div>
+
             </div>
             <div class="hint">
                 * ถ้ายังไม่มีสินค้า ระบบจะสร้างตัวอย่างสินค้าให้โดยอัตโนมัติ (เมื่อมีการเปิดหน้า Cashier ครั้งแรก)
@@ -59,8 +62,9 @@
                     <thead>
                     <tr>
                         <th>ชื่อสินค้า</th>
+                        <th>หมวดหมู่</th>
                         <th>ราคา</th>
-                        <th style="width: 120px;">จัดการ</th>
+                        <th style="width: 140px;">จัดการ</th>
                     </tr>
                     </thead>
                     <tbody id="adminProductBody"></tbody>

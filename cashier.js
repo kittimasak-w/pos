@@ -6,33 +6,42 @@
     const OrderStore = window.OrderStore;
 
     let cart = [];
+    let activeCategory = 'all';
+
 
     function renderProducts() {
         const container = document.getElementById('productList');
         const label = document.getElementById('productCountLabel');
         const products = ProductStore.getAll();
 
-        label.textContent = products.length + ' รายการสินค้า';
+        // filter ตามหมวดหมู่
+        const visibleProducts =
+            activeCategory === 'all'
+                ? products
+                : products.filter(p => (p.category || 'ทั่วไป') === activeCategory);
+
+        label.textContent = visibleProducts.length + ' รายการสินค้า';
         container.innerHTML = '';
 
-        if (products.length === 0) {
-            container.innerHTML = '<div class="empty">ยังไม่มีสินค้า กรุณาเพิ่มใน Admin</div>';
+        if (visibleProducts.length === 0) {
+            container.innerHTML = '<div class="empty">ยังไม่มีสินค้าสำหรับหมวดหมู่นี้</div>';
             return;
         }
 
-        products.forEach(p => {
+        visibleProducts.forEach(p => {
             const div = document.createElement('div');
             div.className = 'product-card';
             div.innerHTML = `
-        <div>
-          <div class="product-name">${p.name}</div>
-          <div class="product-price">${formatCurrency(p.price)}</div>
-        </div>
-        <div class="product-footer">
-          <span class="tag">ID: ${p.id}</span>
-          <button class="btn btn-primary btn-sm">เพิ่ม</button>
-        </div>
-      `;
+      <div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">${formatCurrency(p.price)}</div>
+        <div class="small text-muted">${p.category || ''}</div>
+      </div>
+      <div class="product-footer">
+        <span class="tag">ID: ${p.id}</span>
+        <button class="btn btn-primary btn-sm">เพิ่ม</button>
+      </div>
+    `;
 
             function add(e) {
                 e.stopPropagation();
@@ -164,8 +173,42 @@
         window.location.href = "checkout.html";
     }
 
+    function renderCategoryFilter() {
+        const container = document.getElementById('categoryFilter');
+        const products = ProductStore.getAll();
+
+        const categories = Array.from(
+            new Set(products.map(p => p.category || 'ทั่วไป'))
+        );
+
+        container.innerHTML = '';
+
+        // ปุ่ม "ทั้งหมด"
+        const allChip = document.createElement('button');
+        allChip.className = 'category-chip' + (activeCategory === 'all' ? ' active' : '');
+        allChip.textContent = 'ทั้งหมด';
+        allChip.addEventListener('click', () => {
+            activeCategory = 'all';
+            renderCategoryFilter();
+            renderProducts();
+        });
+        container.appendChild(allChip);
+
+        categories.forEach(cat => {
+            const chip = document.createElement('button');
+            chip.className = 'category-chip' + (activeCategory === cat ? ' active' : '');
+            chip.textContent = cat;
+            chip.addEventListener('click', () => {
+                activeCategory = cat;
+                renderCategoryFilter();
+                renderProducts();
+            });
+            container.appendChild(chip);
+        });
+    }
 
     function init() {
+        renderCategoryFilter();
         renderProducts();
         renderCart();
 
