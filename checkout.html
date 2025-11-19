@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo POS - สรุปรายการก่อนชำระเงิน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+    <header>
+        <div>
+            <div class="title">สรุปรายการ</div>
+            <div class="card-subtitle">ตรวจสอบรายการก่อนชำระเงิน</div>
+        </div>
+        <div class="nav">
+            <a href="cashier.html"><button class="btn btn-outline btn-sm">← กลับไปแก้ไข</button></a>
+        </div>
+    </header>
+
+
+    <section class="section">
+        <div class="pos-layout">
+
+            <!-- CART SUMMARY -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">รายการสินค้า</div>
+                        <div class="card-subtitle">ตรวจสอบจำนวนและยอดรวม</div>
+                    </div>
+                </div>
+
+                <div class="cart-items" style="max-height:400px;">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>สินค้า</th>
+                            <th>จำนวน</th>
+                            <th>ราคารวม</th>
+                        </tr>
+                        </thead>
+                        <tbody id="checkoutItems"></tbody>
+                    </table>
+                </div>
+
+                <div class="cart-summary">
+                    <div class="text-muted small">ยอดรวมทั้งหมด</div>
+                    <div class="cart-total" id="checkoutTotal">฿0</div>
+                </div>
+            </div>
+
+            <!-- PAYMENT PANEL -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">เลือกวิธีชำระเงิน</div>
+                        <div class="card-subtitle">กรุณาเลือก 1 วิธี</div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>วิธีชำระเงิน</label>
+                    <select id="paymentMethodFinal">
+                        <option value="cash">เงินสด</option>
+                        <option value="qr">QR PromptPay</option>
+                        <option value="card">บัตรเครดิต / เดบิต</option>
+                        <option value="transfer">โอนเงิน</option>
+                    </select>
+                </div>
+
+                <div class="inline" style="margin-top:8px;">
+                    <input type="checkbox" id="isPaidFinal" checked>
+                    <label for="isPaidFinal">ชำระเงินแล้ว (Paid)</label>
+                </div>
+
+                <button class="btn btn-primary" id="btnConfirmPayment" style="margin-top: 16px;">
+                    ยืนยันและบันทึกออเดอร์
+                </button>
+
+                <button class="btn btn-danger btn-sm" id="btnCancelOrder" style="margin-top: 10px;">
+                    ยกเลิกออเดอร์
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<script src="app.js"></script>
+<script src="orders.js"></script>
+<script src="checkout.js"></script>
+
+</body>
+</html>

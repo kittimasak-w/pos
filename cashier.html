@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo POS - Cashier</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+    <header>
+        <div>
+            <div class="title">
+                 POS - Cashier
+                <span class="badge">ขายหน้าร้าน</span>
+            </div>
+            <div class="card-subtitle">
+                เลือกสินค้า ใส่จำนวน และดำเนินการชำระเงิน
+            </div>
+        </div>
+        <div class="nav">
+<!--            <a href="index.html"><button class="btn btn-outline btn-sm">รีเซ็ตหน้า</button></a>-->
+            <a href="admin.html"><button class="btn btn-outline btn-sm">จัดการสินค้า</button></a>
+            <a href="sales.html"><button class="btn btn-outline btn-sm">ดูยอดขายทั้งหมด</button></a>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="pos-layout">
+
+            <!-- PRODUCTS -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">เลือกรายการสินค้า</div>
+                        <div class="card-subtitle">แตะที่สินค้าเพื่อเพิ่มเข้าตะกร้า</div>
+                    </div>
+                    <span class="badge-soft" id="productCountLabel"></span>
+                </div>
+
+                <div class="product-grid" id="productList"></div>
+            </div>
+
+            <!-- CART -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">ตะกร้าสินค้า</div>
+                        <div class="card-subtitle">กด + / - เพื่อเปลี่ยนจำนวน</div>
+                    </div>
+                    <button class="btn btn-outline btn-sm" id="btnClearCart">ล้างตะกร้า</button>
+                </div>
+
+                <div class="cart">
+                    <div class="cart-items">
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>สินค้า</th>
+                                <th>จำนวน</th>
+                                <th>ราคา/ชิ้น</th>
+                                <th>รวม</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id="cartBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="cart-summary">
+                        <div class="text-muted small">ยอดสุทธิ</div>
+                        <div class="cart-total" id="cartTotal">฿0</div>
+                    </div>
+
+                    <!-- PAYMENT REMOVED — BUTTON ONLY -->
+                    <div class="cart-actions">
+                        <button class="btn btn-primary" id="btnSaveOrder">
+                            ไปหน้าชำระเงิน
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+
+<script src="app.js"></script>
+<script src="products.js"></script>
+<script src="orders.js"></script>
+<script src="cashier.js"></script>
+</body>
+</html>

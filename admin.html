@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo POS - จัดการสินค้า</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+    <header>
+        <div>
+            <div class="title">
+                Demo POS - จัดการสินค้า
+                <span class="badge">หลังบ้าน</span>
+            </div>
+            <div class="card-subtitle">
+                เพิ่ม / แก้ไข / ลบ สินค้า — ใช้ร่วมกับหน้าขายหน้าร้านทันที
+            </div>
+        </div>
+        <div class="nav">
+            <a href="cashier.html"><button class="btn btn-outline btn-sm">← กลับหน้าขาย</button></a>
+            <a href="sales.html"><button class="btn btn-outline btn-sm">ดูยอดขายทั้งหมด</button></a>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="card" style="width:100%;">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">จัดการสินค้า</div>
+                    <div class="card-subtitle">
+                        เพิ่ม/แก้ไข/ลบสินค้าได้จากที่นี่ ข้อมูลจะถูกใช้ในหน้าขาย (Cashier)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-inline">
+                <div class="product-form">
+                    <div class="field">
+                        <label>ชื่อสินค้า</label>
+                        <input type="text" id="newProductName" placeholder="เช่น Latte เย็น">
+                    </div>
+
+                    <div class="field">
+                        <label>ราคา (บาท)</label>
+                        <input type="number" id="newProductPrice" placeholder="เช่น 89">
+                    </div>
+
+                    <button class="btn btn-primary" id="btnAddProduct">เพิ่มสินค้า</button>
+                </div>
+            </div>
+            <div class="hint">
+                * ถ้ายังไม่มีสินค้า ระบบจะสร้างตัวอย่างสินค้าให้โดยอัตโนมัติ (เมื่อมีการเปิดหน้า Cashier ครั้งแรก)
+            </div>
+
+            <div class="scroll" style="margin-top: 8px;">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ชื่อสินค้า</th>
+                        <th>ราคา</th>
+                        <th style="width: 120px;">จัดการ</th>
+                    </tr>
+                    </thead>
+                    <tbody id="adminProductBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script src="app.js"></script>
+<script src="products.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
