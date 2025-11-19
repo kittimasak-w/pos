@@ -228,9 +228,15 @@
             const bar = document.createElement('div');
             bar.className = 'chart-bar';
 
+            // ✨ tooltip text
+            bar.setAttribute(
+                'data-tooltip',
+                `${dateStr} : ${formatCurrency(total)}`
+            );
+
             const inner = document.createElement('div');
             inner.className = 'chart-bar-inner';
-            const height = Math.max((total / max) * 100, 8); // อย่างน้อย 8%
+            const height = Math.max((total / max) * 100, 12); // อย่างน้อย 12%
             inner.style.height = height + '%';
 
             const value = document.createElement('div');
