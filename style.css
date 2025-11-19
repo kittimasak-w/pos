@@ -810,3 +810,28 @@ th {
 .btn-danger:hover {
     filter: brightness(1.03);
 }
+
+/* ===== Unified Login Inputs ===== */
+.input-wrapper {
+    background: #f5f7fa;
+    border: 1px solid #e5e7eb;
+    border-radius: 30px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    transition: 0.2s;
+}
+
+.input-wrapper:hover {
+    border-color: var(--primary);
+    background: #fff;
+}
+
+.input-wrapper input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+}
