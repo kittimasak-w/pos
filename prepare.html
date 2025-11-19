@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo POS - เตรียมสินค้า</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+    <header>
+        <div>
+            <div class="title">
+                Demo POS - เตรียมสินค้า
+                <span class="badge">สำหรับพนักงาน</span>
+            </div>
+            <div class="card-subtitle">
+                แสดงออเดอร์ที่ต้องเตรียมสินค้า (หลังชำระเงินแล้ว)
+            </div>
+        </div>
+        <div class="nav">
+            <a href="cashier.html"><button class="btn btn-outline btn-sm">หน้าขาย</button></a>
+            <a href="sales.html"><button class="btn btn-outline btn-sm">ยอดขาย</button></a>
+            <button class="btn btn-outline btn-sm" id="btnRefreshQueue">รีเฟรชคิว</button>
+            <button class="btn btn-outline btn-sm" id="btnLogout">ออกจากระบบ</button>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">คิวออเดอร์ที่ต้องเตรียม</div>
+                    <div class="card-subtitle">แสดงเฉพาะออเดอร์ที่ชำระเงินแล้วและยังไม่เสร็จ</div>
+                </div>
+                <span class="badge-soft" id="prepareCountLabel"></span>
+            </div>
+
+            <div id="prepareGrid" class="prepare-grid"></div>
+        </div>
+    </section>
+</div>
+
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script src="orders.js"></script>
+<script src="prepare.js"></script>
+
+<script>
+    // ปุ่ม logout แบบ global เหมือนหน้าอื่น
+    document.getElementById("btnLogout")?.addEventListener("click", function () {
+        localStorage.removeItem("pos_logged_in");
+        window.location.href = "login.html";
+    });
+</script>
+
+</body>
+</html>

@@ -20,7 +20,7 @@
           <input type="text" value="${p.name}" class="small-input-name" style="width: 100%;">
         </td>
         <td>
-          <input type="text" value="${p.category || ''}" class="small-input-category" style="width: 120px;">
+          <input type="text" value="${p.category || ''}" class="small-input-category input-round" style="width: 140px;">
         </td>
         <td>
           <input type="number" value="${p.price}" class="small-input-price" style="width: 80px;">

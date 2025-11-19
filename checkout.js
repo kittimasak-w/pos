@@ -40,28 +40,39 @@
         totalEl.textContent = formatCurrency(total);
     }
 
-
     function handleConfirm() {
         const method = document.getElementById("paymentMethodFinal").value;
         const isPaid = document.getElementById("isPaidFinal").checked;
 
-        // บันทึกจริงลง OrderStore
+        if (!pendingOrder || !pendingOrder.items || pendingOrder.items.length === 0) {
+            alert("ไม่มีสินค้าในคำสั่งซื้อ");
+            return;
+        }
+
+        // บันทึกออเดอร์ลง OrderStore พร้อมสถานะเริ่มต้นเป็น pending
         const newOrder = OrderStore.add({
             items: pendingOrder.items,
             paymentMethod: method,
-            isPaid: isPaid
+            isPaid: isPaid,
+            status: 'pending'
         });
 
+        // เก็บ id ออเดอร์ล่าสุดไว้ทำใบเสร็จ
+        localStorage.setItem("pos_last_order_id", String(newOrder.id));
 
-        // ลบ pending order
+        // ลบ pending ชุดนี้ทิ้ง
         localStorage.removeItem("pendingOrder");
 
-        // เก็บ orderNo ล่าสุดไว้ใช้กับใบเสร็จ
-        localStorage.setItem("pos_last_order_id", newOrder.id);
-
+        // ไปหน้า success (จากตรงนั้นจะไปพิมพ์ใบเสร็จหรือกลับหน้าขายก็ได้)
         window.location.href = "success.html";
     }
 
+    function handleCancel() {
+        if (confirm("ต้องการยกเลิกออเดอร์นี้หรือไม่?")) {
+            localStorage.removeItem("pendingOrder");
+            window.location.href = "cashier.html";
+        }
+    }
 
     function init() {
         loadPendingOrder();
@@ -71,14 +82,10 @@
             .getElementById("btnConfirmPayment")
             .addEventListener("click", handleConfirm);
 
-        document
-            .getElementById("btnCancelOrder")
-            .addEventListener("click", function () {
-                if (confirm("ต้องการยกเลิกออเดอร์นี้หรือไม่?")) {
-                    localStorage.removeItem("pendingOrder");
-                    window.location.href = "cashier.html";
-                }
-            });
+        const btnCancel = document.getElementById("btnCancelOrder");
+        if (btnCancel) {
+            btnCancel.addEventListener("click", handleCancel);
+        }
     }
 
     document.addEventListener("DOMContentLoaded", init);

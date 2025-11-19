@@ -908,3 +908,260 @@ th {
     border-color: transparent;
     box-shadow: 0 8px 16px rgba(37, 99, 235, 0.45);
 }
+
+/* ===== Rounded Inputs for Category ===== */
+.input-round {
+    border: 1px solid #e5e7eb;
+    border-radius: 30px;
+    padding: 8px 14px;
+    font-size: 14px;
+    background: #f8fafc;
+    transition: all 0.15s ease;
+}
+
+.input-round:hover {
+    background: #fff;
+    border-color: var(--primary);
+}
+
+.input-round:focus {
+    border-color: var(--primary);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    outline: none;
+}
+
+/* ===== Input inside product table ===== */
+.small-input-category {
+    padding: 6px 12px;
+    font-size: 13px;
+    background: #f8fafc;
+    border-radius: 20px;
+    transition: 0.15s ease;
+}
+
+.small-input-category:hover {
+    background: #fff;
+}
+
+.small-input-category:focus {
+    border-color: var(--primary);
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+/* ==== Chart Switch Tabs ==== */
+.chart-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.chart-tab {
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s ease;
+}
+
+.chart-tab.small {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.chart-tab:hover {
+    background: #e0e7ff;
+    border-color: #c7d2fe;
+}
+
+.chart-tab.active {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+
+/* ==== Top Products Chart (สามแบบ) ==== */
+.top-products-chart {
+    padding: 14px 10px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Horizontal bar */
+.top-product-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-product-label {
+    width: 130px;
+    font-size: 13px;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-product-bar-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.top-product-inner {
+    height: 20px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+    box-shadow: 0 4px 10px rgba(59,130,246,0.4);
+    transition: width 0.25s ease;
+}
+
+.top-product-value {
+    font-size: 12px;
+    color: #0f172a;
+    font-weight: 600;
+    margin-left: 6px;
+}
+
+/* Pie chart */
+.top-pie-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    justify-content: center;
+}
+
+.top-pie {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.25);
+}
+
+.top-pie-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: #0f172a;
+}
+
+.top-pie-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.top-pie-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+}
+
+/* ===== PREPARE QUEUE (Kitchen / Barista) ===== */
+.prepare-order-no {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.prepare-time {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.prepare-items ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.prepare-items li {
+    font-size: 13px;
+    padding: 2px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.prepare-items .muted {
+    color: #9ca3af;
+}
+
+.prepare-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    gap: 8px;
+}
+
+.prepare-total {
+    font-size: 13px;
+    color: #111827;
+}
+
+.prepare-actions {
+    display: flex;
+    gap: 6px;
+}
+
+/* status pills */
+.prepare-status {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-preparing {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-done {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* ===== Prepare Grid – แนวนอนหลายคอลัมน์ ===== */
+.prepare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 18px;
+    padding: 12px;
+    align-items: start;
+}
+
+/* การ์ด */
+.prepare-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: fit-content;
+}
+
+
+.card:has(#prepareGrid) {
+    display: block !important;
+}
+
+.section .card {
+    width: 100%;
+}
+

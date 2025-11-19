@@ -32,35 +32,41 @@
         return counter;
     }
 
-    function add(orderInput) {
-        const list = load();
-        const now = new Date().toISOString();
+    function calcTotal(items) {
+        if (!items || !Array.isArray(items)) return 0;
+        return items.reduce((sum, i) => sum + (i.price * i.qty), 0);
+    }
+
+    function add(order) {
+        const orders = load();
+        const id = Date.now();
         const orderNo = getNextOrderNo();
+        const createdAt = new Date().toISOString();
 
-        const total = orderInput.items.reduce(
-            (sum, i) => sum + (Number(i.price) || 0) * (Number(i.qty) || 0),
-            0
-        );
-
-        const order = {
-            id: Date.now(),
+        const newOrder = {
+            id,
             orderNo,
-            createdAt: now,
-            items: orderInput.items.map(i => ({
-                productId: i.productId,
-                name: i.name,
-                price: Number(i.price) || 0,
-                qty: Number(i.qty) || 0
-            })),
-            total,
-            paymentMethod: orderInput.paymentMethod,
-            isPaid: !!orderInput.isPaid
+            createdAt,
+            items: order.items || [],
+            total: order.total || calcTotal(order.items || []),
+            paymentMethod: order.paymentMethod || 'cash',
+            isPaid: !!order.isPaid,
+            status: order.status || 'pending'   // 👈 เพิ่มบรรทัดนี้
         };
 
-        list.push(order);
-        ordersCache = list;
-        save();
-        return order;
+        orders.push(newOrder);
+        save(orders);
+        return newOrder;
+    }
+
+    function updateStatus(id, newStatus) {
+        const orders = load();
+        const idx = orders.findIndex(o => o.id === id);
+        if (idx === -1) return null;
+
+        orders[idx].status = newStatus;
+        save(orders);
+        return orders[idx];
     }
 
     function togglePaid(orderId) {
@@ -76,6 +82,7 @@
     window.OrderStore = {
         getAll,
         add,
-        togglePaid
+        togglePaid,
+        updateStatus
     };
 })(window);
