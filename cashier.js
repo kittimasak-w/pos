@@ -172,24 +172,33 @@
             qty: c.qty
         }));
 
-        // สร้างออเดอร์ใหม่ (ยังไม่จ่าย)
-        OrderStore.add({
+        // สร้างออเดอร์ใหม่
+        const saved = OrderStore.add({
             items,
             isPaid: false,
             status: "pending",
-            tableId: activeTableId
+            tableId: activeTableId || null
         });
-
-        // ⭐ โต๊ะต้องกลายเป็น "มีออเดอร์ค้าง"
-        TableStore.updateTableStatus(activeTableId, "inprogress");
 
         // เคลียร์ตะกร้า
         cart = [];
         renderCart();
 
-        alert("ส่งออเดอร์เข้าครัวแล้ว");
-        window.location.href = "table.html";
+        // =============== DINE-IN ===============
+        if (isTableMode) {
+            // โต๊ะต้องกลายเป็น "มีออเดอร์ค้าง"
+            TableStore.updateTableStatus(activeTableId, "inprogress");
+
+            alert("ส่งออเดอร์เข้าครัวแล้ว");
+            window.location.href = "table.html";
+            return;
+        }
+
+        // =============== WALK-IN ===============
+        alert("บันทึกออเดอร์แล้ว → ไปชำระเงิน");
+        window.location.href = "checkout.html?order=" + saved.id;
     }
+
 
 
     // ==========================================

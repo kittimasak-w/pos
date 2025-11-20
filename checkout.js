@@ -21,19 +21,6 @@
     }
 
     // =======================================================
-    // กรณี walk-in → โหลด pendingOrder ปกติ
-    // =======================================================
-    function loadPendingOrderWalkin() {
-        const raw = localStorage.getItem("pendingOrder");
-        if (!raw) {
-            alert("ไม่มีข้อมูลคำสั่งซื้อ");
-            window.location.href = "cashier.html";
-            return;
-        }
-        pendingOrder = JSON.parse(raw);
-    }
-
-    // =======================================================
     // กรณีโต๊ะ → ดึงออเดอร์ทั้งหมดของโต๊ะ (ยังไม่จ่ายเงิน)
     // =======================================================
     function loadOrdersForTable() {
@@ -116,18 +103,30 @@
 
         // ⭐ Case 1: Walk-in
         if (!isTableMode) {
-            const newOrder = OrderStore.add({
-                items: pendingOrder.items,
+
+            // อ่าน orderId จาก URL
+            const params = new URLSearchParams(window.location.search);
+            const orderId = Number(params.get("order"));
+
+            // โหลด order ที่ถูกสร้างตอน cashier.js
+            const order = OrderStore.getById(orderId);
+
+            if (!order) {
+                alert("ไม่พบข้อมูลคำสั่งซื้อ");
+                window.location.href = "cashier.html";
+                return;
+            }
+
+            // อัปเดตสถานะ
+            const updated = OrderStore.update(orderId, {
+                ...order,
                 paymentMethod: method,
                 isPaid: isPaid,
-                status: isPaid ? "pending" : "pending",
-                tableId: null
+                status: "done"
             });
 
-            localStorage.setItem("pos_last_order_id", String(newOrder.id));
-            localStorage.removeItem("pendingOrder");
-
-            window.location.href = "success.html";
+            // ไปหน้าใบเสร็จ
+            window.location.href = "receipt.html?order=" + orderId;
             return;
         }
 
@@ -152,7 +151,7 @@
 
         alert("ชำระเงินสำเร็จ");
 
-        window.location.href = "table.html";
+        window.location.href = "receipt.html?order=" + tableOrders[0].id;
     }
 
     // =======================================================
@@ -174,8 +173,35 @@
     function init() {
         detectTableMode();
 
-        if (isTableMode) loadOrdersForTable();
-        else loadPendingOrderWalkin();
+        const params = new URLSearchParams(window.location.search);
+        const orderId = params.get("order");
+
+// --- Walk-in ใช้ orderId ---
+        if (!isTableMode && orderId) {
+            const orderData = OrderStore.getById(Number(orderId));
+            if (!orderData) {
+                alert("ไม่พบข้อมูลคำสั่งซื้อ");
+                window.location.href = "cashier.html";
+                return;
+            }
+
+            pendingOrder = {
+                items: orderData.items,
+                total: orderData.total,
+                tableId: null
+            };
+        }
+
+// --- Table Mode ---
+        else if (isTableMode) {
+            loadOrdersForTable();
+        }
+
+// --- ถ้าเป็น Walk-in แต่ไม่มี orderId (กรณีเก่า) ---
+        else {
+            loadPendingOrderWalkin();
+        }
+
 
         renderSummary();
 

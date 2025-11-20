@@ -1,82 +1,79 @@
 // =============================
 // AUTO MOCK DATA IF EMPTY
 // =============================
-// =============================
-// AUTO MOCK DATA IF EMPTY
-// =============================
-(function autoMockSalesData() {
-    const LS_ORDERS_KEY = 'pos_demo_orders';
-    const LS_COUNTER_KEY = 'pos_demo_order_counter';
-
-    const existing = localStorage.getItem(LS_ORDERS_KEY);
-    try {
-        if (existing && JSON.parse(existing).length > 0) return;
-    } catch (e) {}
-
-    console.log("No sales data found → generating mock data for last 10 days...");
-
-    const today = new Date();
-    today.setHours(10, 0, 0, 0);
-
-    const products = [
-        { name: 'Americano (ร้อน)', price: 60 },
-        { name: 'Latte (เย็น)', price: 80 },
-        { name: 'ชาเขียวเย็น', price: 75 },
-        { name: 'เค้กช็อคโกแลต', price: 95 }
-    ];
-
-    const methods = ['cash', 'qr', 'card', 'transfer'];
-
-    const orders = [];
-    let counter = 0;
-
-    function randomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    for (let i = 9; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-
-        const orderCount = randomInt(2, 4);
-
-        for (let j = 0; j < orderCount; j++) {
-            counter += 1;
-
-            const createdAt = new Date(date);
-            createdAt.setHours(9 + j * 2, randomInt(0, 40), 0, 0);
-
-            const itemCount = randomInt(1, 3);
-            const items = [];
-
-            for (let k = 0; k < itemCount; k++) {
-                const p = products[randomInt(0, products.length - 1)];
-                const qty = randomInt(1, 3);
-                items.push({ name: p.name, price: p.price, qty });
-            }
-
-            const total = items.reduce((t, it) => t + it.price * it.qty, 0);
-
-            orders.push({
-                id: Date.now() + counter,
-                orderNo: counter,
-                createdAt: createdAt.toISOString(),
-                items,
-                total,
-                paymentMethod: methods[randomInt(0, methods.length - 1)],
-
-                // ⭐ เพิ่มตามที่คุณต้องการ
-                isPaid: true,
-                status: 'done'
-            });
-        }
-    }
-
-    localStorage.setItem(LS_ORDERS_KEY, JSON.stringify(orders));
-    localStorage.setItem(LS_COUNTER_KEY, String(counter));
-
-    console.log("Mock sales data generated:", orders.length, "orders");
-})();
+// (function autoMockSalesData() {
+//     const LS_ORDERS_KEY = 'pos_demo_orders';
+//     const LS_COUNTER_KEY = 'pos_demo_order_counter';
+//
+//     const existing = localStorage.getItem(LS_ORDERS_KEY);
+//     try {
+//         if (existing && JSON.parse(existing).length > 0) return;
+//     } catch (e) {}
+//
+//     console.log("No sales data found → generating mock data for last 10 days...");
+//
+//     const today = new Date();
+//     today.setHours(10, 0, 0, 0);
+//
+//     const products = [
+//         { name: 'Americano (ร้อน)', price: 60 },
+//         { name: 'Latte (เย็น)', price: 80 },
+//         { name: 'ชาเขียวเย็น', price: 75 },
+//         { name: 'เค้กช็อคโกแลต', price: 95 }
+//     ];
+//
+//     const methods = ['cash', 'qr', 'card', 'transfer'];
+//
+//     const orders = [];
+//     let counter = 0;
+//
+//     function randomInt(min, max) {
+//         return Math.floor(Math.random() * (max - min + 1)) + min;
+//     }
+//
+//     for (let i = 9; i >= 0; i--) {
+//         const date = new Date(today);
+//         date.setDate(today.getDate() - i);
+//
+//         const orderCount = randomInt(2, 4);
+//
+//         for (let j = 0; j < orderCount; j++) {
+//             counter += 1;
+//
+//             const createdAt = new Date(date);
+//             createdAt.setHours(9 + j * 2, randomInt(0, 40), 0, 0);
+//
+//             const itemCount = randomInt(1, 3);
+//             const items = [];
+//
+//             for (let k = 0; k < itemCount; k++) {
+//                 const p = products[randomInt(0, products.length - 1)];
+//                 const qty = randomInt(1, 3);
+//                 items.push({ name: p.name, price: p.price, qty });
+//             }
+//
+//             const total = items.reduce((t, it) => t + it.price * it.qty, 0);
+//
+//             orders.push({
+//                 id: Date.now() + counter,
+//                 orderNo: counter,
+//                 createdAt: createdAt.toISOString(),
+//                 items,
+//                 total,
+//                 paymentMethod: methods[randomInt(0, methods.length - 1)],
+//
+//                 // ⭐ เพิ่มตามที่คุณต้องการ
+//                 isPaid: true,
+//                 status: 'done'
+//             });
+//         }
+//     }
+//
+//     localStorage.setItem(LS_ORDERS_KEY, JSON.stringify(orders));
+//     localStorage.setItem(LS_COUNTER_KEY, String(counter));
+//
+//     console.log("Mock sales data generated:", orders.length, "orders");
+// })();
 
 
 (function (window) {
