@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo POS - ระบบโต๊ะ</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .table-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+            border: 1px solid #e5e7eb;
+        }
+
+        .status-available { background:#dcfce7;color:#166534;border-color:#bbf7d0; }
+        .status-occupied { background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe; }
+        .status-inprogress { background:#fef3c7;color:#92400e;border-color:#fde68a; }
+        .status-toclean { background:#fee2e2;color:#b91c1c;border-color:#fecaca; }
+
+        .table-name { font-size:20px;font-weight:700; }
+        .table-status { margin-top:6px;font-size:14px; }
+
+        .table-actions {
+            margin-top:14px;
+            display:flex;
+            flex-direction:column;
+            gap:8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+        <div>
+            <div class="title">
+                Demo POS - ระบบโต๊ะ
+                <span class="badge">Table Management</span>
+            </div>
+            <div class="card-subtitle">เลือกโต๊ะเพื่อเริ่มสั่งอาหาร หรือจัดการสถานะ</div>
+        </div>
+
+        <div class="nav">
+            <a href="cashier.html"><button class="btn btn-outline btn-sm">ขายหน้าร้าน</button></a>
+            <a href="prepare.html"><button class="btn btn-outline btn-sm">เตรียมสินค้า</button></a>
+            <a href="sales.html"><button class="btn btn-outline btn-sm">ยอดขาย</button></a>
+            <button class="btn btn-outline btn-sm" id="btnLogout">ออกจากระบบ</button>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">ผังโต๊ะในร้าน</div>
+                    <div class="card-subtitle">เลือกโต๊ะเพื่อจัดการ</div>
+                </div>
+                <span class="badge-soft" id="tableCountLabel"></span>
+            </div>
+
+            <div id="tableGrid" class="table-grid"></div>
+        </div>
+    </section>
+
+</div>
+
+<script src="app.js" defer></script>
+<script src="table.js" defer></script>
+<script src="orders.js" defer></script>
+
+<script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const grid = document.getElementById("tableGrid");
+        const label = document.getElementById("tableCountLabel");
+
+        // ---------------------------
+        // function: getStatusText
+        // ---------------------------
+        function getStatusText(s) {
+            switch (s) {
+                case "available": return "ว่าง";
+                case "occupied": return "มีลูกค้า";
+                case "inprogress": return "มีออเดอร์ค้าง";
+                case "toclean": return "รอทำความสะอาด";
+            }
+            return "-";
+        }
+
+        // ---------------------------
+        // function: buildActions
+        // ---------------------------
+        function buildActions(table) {
+            const el = document.getElementById("table-actions-" + table.id);
+            el.innerHTML = "";
+
+            // โต๊ะว่าง
+            if (table.status === "available") {
+                const btn = document.createElement("button");
+                btn.className = "btn btn-primary btn-sm";
+                btn.textContent = "เปิดโต๊ะ";
+                btn.onclick = () => {
+                    TableStore.updateTableStatus(table.id, "occupied");
+                    renderTables();
+                };
+                el.appendChild(btn);
+                return;
+            }
+
+            // มีลูกค้า / มีออเดอร์ค้าง
+            if (table.status === "occupied" || table.status === "inprogress") {
+                const addBtn = document.createElement("button");
+                addBtn.className = "btn btn-primary btn-sm";
+                addBtn.textContent = "สั่งเพิ่ม";
+                addBtn.onclick = () => {
+                    window.location.href = "cashier.html?table=" + table.id;
+                };
+
+                const billBtn = document.createElement("button");
+                billBtn.className = "btn btn-outline btn-sm";
+                billBtn.textContent = "คิดเงิน";
+                billBtn.onclick = () => {
+                    window.location.href = "checkout.html?table=" + table.id;
+                };
+
+                el.appendChild(addBtn);
+                el.appendChild(billBtn);
+                return;
+            }
+
+            // รอทำความสะอาด
+            if (table.status === "toclean") {
+                const cleanBtn = document.createElement("button");
+                cleanBtn.className = "btn btn-danger btn-sm";
+                cleanBtn.textContent = "เคลียร์โต๊ะ";
+                cleanBtn.onclick = () => {
+                    TableStore.updateTableStatus(table.id, "available");
+                    renderTables();
+                };
+                el.appendChild(cleanBtn);
+            }
+        }
+
+        // ---------------------------
+        // function: renderTables
+        // ---------------------------
+        function renderTables() {
+            const tables = TableStore.loadTables();
+            const allOrders = OrderStore.getAll();
+
+            label.textContent = tables.length + " โต๊ะ";
+            grid.innerHTML = "";
+
+            tables.forEach(tb => {
+
+                const hasPending = allOrders.some(o =>
+                    o.tableId === tb.id &&
+                    o.status !== "done"
+                );
+
+                if (hasPending) {
+                    TableStore.updateTableStatus(tb.id, "inprogress");
+                    tb.status = "inprogress";
+                } else if (tb.status !== "available" && tb.status !== "toclean") {
+                    TableStore.updateTableStatus(tb.id, "occupied");
+                    tb.status = "occupied";
+                }
+
+                // ----- create DOM card -----
+                const card = document.createElement("div");
+                card.className = "table-card status-" + tb.status;
+
+                const nameEl = document.createElement("div");
+                nameEl.className = "table-name";
+                nameEl.textContent = tb.name;
+                card.appendChild(nameEl);
+
+                const statusEl = document.createElement("div");
+                statusEl.className = "table-status";
+                statusEl.textContent = getStatusText(tb.status);
+                card.appendChild(statusEl);
+
+                const actionsEl = document.createElement("div");
+                actionsEl.className = "table-actions";
+                actionsEl.id = "table-actions-" + tb.id;
+                card.appendChild(actionsEl);
+
+                grid.appendChild(card);
+
+                buildActions(TableStore.getTableById(tb.id));
+            });
+        }
+
+        // Logout
+        document.getElementById("btnLogout")?.addEventListener("click", () => {
+            localStorage.removeItem("pos_logged_in");
+            window.location.href = "login.html";
+        });
+
+        // RUN
+        renderTables();
+
+    });
+</script>
+
+</body>
+</html>

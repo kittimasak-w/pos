@@ -2,14 +2,84 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting…</title>
-    <meta http-equiv="refresh" content="0; url=cashier.html">
-    <script>
-        // fallback หาก meta refresh ไม่ทำงาน
-        window.location.href = "cashier.html";
-    </script>
+    <title>POS - เลือกการใช้งาน</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f8f9fa;
+            margin: 0;
+        }
+
+        .choice-container {
+            background: white;
+            padding: 40px 32px;
+            border-radius: 18px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+            width: 360px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .btn-choice {
+            width: 100%;
+            padding: 16px;
+            margin-top: 14px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-table {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-walkin {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-choice:hover {
+            opacity: 0.92;
+        }
+
+        .divider {
+            margin: 16px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
 </head>
+
 <body>
-<p>กำลังไปยังหน้าขายหน้าร้าน (Cashier)…</p>
+
+<div class="choice-container">
+    <h1>เลือกการใช้งาน</h1>
+
+    <!-- ไปเลือกโต๊ะ -->
+    <button class="btn-choice btn-table"
+            onclick="window.location.href='table.html'">
+        🍽 นั่งโต๊ะ (Dine-in)
+    </button>
+
+    <div class="divider">หรือ</div>
+
+    <!-- Walk-in ไม่ต้องมีโต๊ะ -->
+    <button class="btn-choice btn-walkin"
+            onclick="window.location.href='cashier.html'">
+        🚶‍♂️ Walk-in
+    </button>
+</div>
+
 </body>
 </html>

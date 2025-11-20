@@ -1165,3 +1165,10 @@ th {
     width: 100%;
 }
 
+.prepare-table {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563eb;
+    margin-top: 4px;
+}
+

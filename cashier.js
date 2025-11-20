@@ -1,155 +1,106 @@
 (function (window) {
     'use strict';
 
-    const { formatCurrency } = window.AppUtils;
     const ProductStore = window.ProductStore;
     const OrderStore = window.OrderStore;
+    const TableStore = window.TableStore;
+    const { formatCurrency } = window.AppUtils;
 
     let cart = [];
-    let activeCategory = 'all';
+    let activeTableId = null;
+    let isTableMode = false;
 
+    // ==========================================
+    // ตรวจว่าเปิดมาจากโต๊ะหรือไม่
+    // ==========================================
+    function detectTableMode() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("table")) {
+            activeTableId = Number(params.get("table"));
+            isTableMode = true;
+        }
+    }
 
-    function renderProducts() {
-        const container = document.getElementById('productList');
-        const label = document.getElementById('productCountLabel');
-        const products = ProductStore.getAll();
+    // ==========================================
+    // UI โหมดโต๊ะ
+    // ==========================================
+    function renderTableIndicator() {
+        if (!isTableMode) return;
 
-        // filter ตามหมวดหมู่
-        const visibleProducts =
-            activeCategory === 'all'
-                ? products
-                : products.filter(p => (p.category || 'ทั่วไป') === activeCategory);
-
-        label.textContent = visibleProducts.length + ' รายการสินค้า';
-        container.innerHTML = '';
-
-        if (visibleProducts.length === 0) {
-            container.innerHTML = '<div class="empty">ยังไม่มีสินค้าสำหรับหมวดหมู่นี้</div>';
-            return;
+        const header = document.querySelector("header .title");
+        if (header) {
+            header.innerHTML += `
+                <span class="badge" style="margin-left:8px; background:#2563eb; color:white;">
+                    โต๊ะ ${activeTableId}
+                </span>
+            `;
         }
 
-        visibleProducts.forEach(p => {
-            const div = document.createElement('div');
-            div.className = 'product-card';
-            div.innerHTML = `
-      <div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${formatCurrency(p.price)}</div>
-        <div class="small text-muted">${p.category || ''}</div>
-      </div>
-      <div class="product-footer">
-        <span class="tag">ID: ${p.id}</span>
-        <button class="btn btn-primary btn-sm">เพิ่ม</button>
-      </div>
-    `;
+        const info = document.getElementById("cashierTableInfo");
+        if (info) {
+            info.textContent = "กำลังสั่งให้โต๊ะ " + activeTableId;
+            info.style.display = "block";
+        }
 
-            function add(e) {
+        const backBtn = document.getElementById("btnBackToTable");
+        if (backBtn) backBtn.style.display = "inline-block";
+    }
+
+    // ==========================================
+    // Load & Render Products
+    // ==========================================
+    function renderProducts() {
+        const container = document.getElementById("productList");
+        const label = document.getElementById("productCountLabel");
+        const products = ProductStore.getAll();
+
+        container.innerHTML = "";
+        label.textContent = products.length + " รายการสินค้า";
+
+        products.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "product-card";
+            div.innerHTML = `
+                <div>
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-price">${formatCurrency(p.price)}</div>
+                </div>
+                <div class="product-footer">
+                    <button class="btn btn-primary btn-sm">เพิ่ม</button>
+                </div>
+            `;
+
+            div.addEventListener("click", () => addToCart(p.id));
+            div.querySelector("button").addEventListener("click", (e) => {
                 e.stopPropagation();
                 addToCart(p.id);
-            }
-
-            div.addEventListener('click', add);
-            div.querySelector('button').addEventListener('click', add);
+            });
 
             container.appendChild(div);
         });
     }
 
-    function renderCart() {
-        const tbody = document.getElementById('cartBody');
-        const totalEl = document.getElementById('cartTotal');
-
-        tbody.innerHTML = '';
-
-        if (cart.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="empty">ยังไม่มีสินค้าในตะกร้า</td></tr>`;
-            totalEl.textContent = formatCurrency(0);
-            return;
-        }
-
-        let total = 0;
-
-        cart.forEach(item => {
-            const sub = item.price * item.qty;
-            total += sub;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-        <td>${item.name}</td>
-        <td>
-          <div class="qty-control">
-            <button class="dec">-</button>
-            <span>${item.qty}</span>
-            <button class="inc">+</button>
-          </div>
-        </td>
-        <td>${formatCurrency(item.price)}</td>
-        <td>${formatCurrency(sub)}</td>
-        <td>
-          <button class="btn btn-icon btn-danger btn-sm">×</button>
-        </td>
-      `;
-
-            // -----------------------------------------------
-            // FIX ปุ่ม Safari – ดึงปุ่มแบบปลอดภัย (ไม่ destructuring)
-            // -----------------------------------------------
-            const qtyButtons = tr.querySelectorAll('.qty-control button');
-            const btnDec = qtyButtons[0];
-            const btnInc = qtyButtons[1];
-
-            const removeBtn = tr.querySelector('.btn-danger');
-
-            btnDec.addEventListener('click', () => {
-                updateCartQty(item.productId, item.qty - 1);
-            });
-
-            btnInc.addEventListener('click', () => {
-                updateCartQty(item.productId, item.qty + 1);
-            });
-
-            removeBtn.addEventListener('click', () => {
-                removeCartItem(item.productId);
-            });
-
-            tbody.appendChild(tr);
-        });
-
-        totalEl.textContent = formatCurrency(total);
-    }
-
-    function addToCart(productId) {
-        const p = ProductStore.getById(productId);
+    // ==========================================
+    // Cart
+    // ==========================================
+    function addToCart(id) {
+        const p = ProductStore.getById(id);
         if (!p) return;
 
-        const existing = cart.find(c => c.productId === productId);
-        if (existing) existing.qty++;
-        else {
-            cart.push({
-                productId: p.id,
-                name: p.name,
-                price: p.price,
-                qty: 1
-            });
-        }
+        const idx = cart.findIndex(c => c.id === id);
+        if (idx === -1) cart.push({ ...p, qty: 1 });
+        else cart[idx].qty++;
 
         renderCart();
     }
 
-    function updateCartQty(productId, qty) {
-        const item = cart.find(c => c.productId === productId);
-        if (!item) return;
+    function changeQty(id, delta) {
+        const idx = cart.findIndex(c => c.id === id);
+        if (idx === -1) return;
 
-        if (qty <= 0) {
-            cart = cart.filter(c => c.productId !== productId);
-        } else {
-            item.qty = qty;
-        }
+        cart[idx].qty += delta;
+        if (cart[idx].qty <= 0) cart.splice(idx, 1);
 
-        renderCart();
-    }
-
-    function removeCartItem(productId) {
-        cart = cart.filter(c => c.productId !== productId);
         renderCart();
     }
 
@@ -158,68 +109,103 @@
         renderCart();
     }
 
-    function handleSaveOrder() {
+    function renderCart() {
+        const tbody = document.getElementById("cartBody");
+        const totalEl = document.getElementById("cartTotal");
+
+        tbody.innerHTML = "";
+        let total = 0;
+
+        cart.forEach(item => {
+            const sum = item.qty * item.price;
+            total += sum;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>
+                    <button class="btn btn-outline btn-sm qty-btn" data-id="${item.id}" data-d="-1">-</button>
+                    <span class="qty">${item.qty}</span>
+                    <button class="btn btn-outline btn-sm qty-btn" data-id="${item.id}" data-d="1">+</button>
+                </td>
+                <td>${formatCurrency(item.price)}</td>
+                <td>${formatCurrency(sum)}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm btn-del" data-id="${item.id}">ลบ</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        totalEl.textContent = formatCurrency(total);
+
+        document.querySelectorAll(".qty-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = Number(btn.dataset.id);
+                const delta = Number(btn.dataset.d);
+                changeQty(id, delta);
+            });
+        });
+
+        document.querySelectorAll(".btn-del").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const id = Number(btn.dataset.id);
+                cart = cart.filter(c => c.id !== id);
+                renderCart();
+            });
+        });
+    }
+
+
+    // ==========================================
+    // บันทึกออเดอร์ (สำคัญสุด)
+    // ==========================================
+    function saveOrder() {
         if (cart.length === 0) {
-            alert('ยังไม่มีสินค้าในตะกร้า');
+            alert("กรุณาเลือกสินค้า");
             return;
         }
 
-        const pendingOrder = {
-            items: cart
-        };
+        const items = cart.map(c => ({
+            name: c.name,
+            price: c.price,
+            qty: c.qty
+        }));
 
-        localStorage.setItem("pendingOrder", JSON.stringify(pendingOrder));
+        // สร้างออเดอร์ใหม่ (ยังไม่จ่าย)
+        OrderStore.add({
+            items,
+            isPaid: false,
+            status: "pending",
+            tableId: activeTableId
+        });
 
-        window.location.href = "checkout.html";
+        // ⭐ โต๊ะต้องกลายเป็น "มีออเดอร์ค้าง"
+        TableStore.updateTableStatus(activeTableId, "inprogress");
+
+        // เคลียร์ตะกร้า
+        cart = [];
+        renderCart();
+
+        alert("ส่งออเดอร์เข้าครัวแล้ว");
+        window.location.href = "table.html";
     }
 
-    function renderCategoryFilter() {
-        const container = document.getElementById('categoryFilter');
-        const products = ProductStore.getAll();
 
-        const categories = Array.from(
-            new Set(products.map(p => p.category || 'ทั่วไป'))
-        );
-
-        container.innerHTML = '';
-
-        // ปุ่ม "ทั้งหมด"
-        const allChip = document.createElement('button');
-        allChip.className = 'category-chip' + (activeCategory === 'all' ? ' active' : '');
-        allChip.textContent = 'ทั้งหมด';
-        allChip.addEventListener('click', () => {
-            activeCategory = 'all';
-            renderCategoryFilter();
-            renderProducts();
-        });
-        container.appendChild(allChip);
-
-        categories.forEach(cat => {
-            const chip = document.createElement('button');
-            chip.className = 'category-chip' + (activeCategory === cat ? ' active' : '');
-            chip.textContent = cat;
-            chip.addEventListener('click', () => {
-                activeCategory = cat;
-                renderCategoryFilter();
-                renderProducts();
-            });
-            container.appendChild(chip);
-        });
-    }
-
+    // ==========================================
+    // INIT
+    // ==========================================
     function init() {
-        renderCategoryFilter();
+        detectTableMode();
+        renderTableIndicator();
+
         renderProducts();
         renderCart();
 
-        document.getElementById('btnClearCart').addEventListener('click', () => {
-            if (cart.length === 0) return;
-            if (confirm('ล้างตะกร้าทั้งหมด ?')) clearCart();
-        });
-
-        document.getElementById('btnSaveOrder').addEventListener('click', handleSaveOrder);
+        document.getElementById("btnSaveOrder").addEventListener("click", saveOrder);
+        document.getElementById("btnClearCart").addEventListener("click", clearCart);
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener("DOMContentLoaded", init);
 
 })(window);

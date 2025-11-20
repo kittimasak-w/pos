@@ -11,10 +11,17 @@
     <header>
         <div>
             <div class="title">สรุปรายการ</div>
+            <div id="checkoutTableInfo"
+                 style="display:none; font-weight:700; color:#2563eb; margin-top:6px; font-size:15px;">
+            </div>
             <div class="card-subtitle">ตรวจสอบรายการก่อนชำระเงิน</div>
         </div>
         <div class="nav">
             <a href="cashier.html"><button class="btn btn-outline btn-sm">← กลับไปแก้ไข</button></a>
+            <!-- ⭐ เพิ่ม -->
+            <a id="btnBackToTable" href="table.html" style="display:none;">
+                <button class="btn btn-outline btn-sm">กลับหน้าโต๊ะ</button>
+            </a>
         </div>
         <button class="btn btn-outline btn-sm" id="btnLogout">ออกจากระบบ</button>
 
@@ -59,6 +66,10 @@
                         <div class="card-title">เลือกวิธีชำระเงิน</div>
                         <div class="card-subtitle">กรุณาเลือก 1 วิธี</div>
                     </div>
+                    <div id="checkoutTableInfo"
+                         style="display:none; font-weight:700; color:#2563eb; margin-bottom:10px;">
+                    </div>
+
                 </div>
 
                 <div class="field">
@@ -93,7 +104,35 @@
 <script src="auth.js"></script>
 <script src="app.js"></script>
 <script src="orders.js"></script>
+<script src="table.js"></script>
 <script src="checkout.js"></script>
+<script>
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has("table")) {
+            const tableId = params.get("table");
+
+            // ⭐ แสดงข้อความด้านบน
+            const info = document.getElementById("checkoutTableInfo");
+            info.textContent = "คิดเงินโต๊ะ " + tableId;
+            info.style.display = "block";
+
+            // ⭐ แสดงปุ่มกลับไปหน้าโต๊ะ
+            const btnBack = document.getElementById("btnBackToTable");
+            btnBack.style.display = "inline-block";
+
+            // ⭐ เปลี่ยน badge ให้เป็นโหมดโต๊ะ
+            const badge = document.querySelector(".badge");
+            if (badge) {
+                badge.textContent = "โต๊ะ " + tableId;
+                badge.style.background = "#2563eb";
+                badge.style.color = "white";
+            }
+        }
+    })();
+</script>
+
 <script>
     document.getElementById("btnLogout")?.addEventListener("click", function () {
         localStorage.removeItem("pos_logged_in");

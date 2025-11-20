@@ -5,19 +5,31 @@
     <title>Demo POS - Cashier</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <div class="app">
+
     <header>
         <div>
+
             <div class="title">
-                 POS - Cashier
+                Demo POS - Cashier
                 <span class="badge">ขายหน้าร้าน</span>
             </div>
+
+            <!-- ⭐ แสดงเมื่อเป็นโหมดโต๊ะ -->
+            <div id="cashierTableInfo"
+                 style="display:none; margin-top:6px; font-weight:700; color:#2563eb; font-size:15px;">
+            </div>
+
             <div class="card-subtitle">
-                เลือกสินค้า ใส่จำนวน และดำเนินการชำระเงิน
+                เลือกสินค้า ใส่จำนวน และดำเนินการสั่งออเดอร์
             </div>
         </div>
+
         <div class="nav">
+
             <a href="admin.html">
                 <button class="btn btn-outline btn-sm">จัดการสินค้า</button>
             </a>
@@ -26,13 +38,21 @@
                 <button class="btn btn-outline btn-sm">เตรียมสินค้า</button>
             </a>
 
+            <a href="table.html">
+                <button class="btn btn-outline btn-sm">หน้าโต๊ะ</button>
+            </a>
+
             <a href="sales.html">
                 <button class="btn btn-outline btn-sm">ดูยอดขายทั้งหมด</button>
             </a>
-        </div>
 
-        <button class="btn btn-outline btn-sm" id="btnLogout">ออกจากระบบ</button>
+            <!-- ⭐ ปุ่มกลับไปหน้าโต๊ะ (เฉพาะ table mode) -->
+            <a id="btnBackToTable" href="table.html" style="display:none;">
+                <button class="btn btn-outline btn-sm">กลับหน้าโต๊ะ</button>
+            </a>
+        </div>
     </header>
+
 
     <section class="section">
         <div class="pos-layout">
@@ -47,12 +67,8 @@
                     <span class="badge-soft" id="productCountLabel"></span>
                 </div>
 
-                <!-- แถบเลือกหมวดหมู่ -->
-                <div class="category-filter" id="categoryFilter"></div>
-
                 <div class="product-grid" id="productList"></div>
             </div>
-
 
             <!-- CART -->
             <div class="card">
@@ -85,31 +101,51 @@
                         <div class="cart-total" id="cartTotal">฿0</div>
                     </div>
 
-                    <!-- PAYMENT REMOVED — BUTTON ONLY -->
                     <div class="cart-actions">
                         <button class="btn btn-primary" id="btnSaveOrder">
-                            ไปหน้าชำระเงิน
+                            บันทึกออเดอร์
                         </button>
                     </div>
-
                 </div>
-            </div>
 
+            </div>
         </div>
     </section>
+
 </div>
 
-<script src="auth.js"></script>
 <script src="app.js"></script>
 <script src="products.js"></script>
 <script src="orders.js"></script>
+<script src="table.js"></script>
 <script src="cashier.js"></script>
 
+<!-- ⭐ Script UI โหมดโต๊ะ -->
 <script>
-    document.getElementById("btnLogout")?.addEventListener("click", function () {
-        localStorage.removeItem("pos_logged_in");
-        window.location.href = "login.html";
-    });
+    (function () {
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.has("table")) {
+            const tableId = params.get("table");
+
+            // ⭐ เปลี่ยนแสดงข้อความ
+            const info = document.getElementById("cashierTableInfo");
+            info.textContent = "กำลังสั่งให้โต๊ะ " + tableId;
+            info.style.display = "block";
+
+            // ⭐ แสดงปุ่มกลับหน้าโต๊ะ
+            const backBtn = document.getElementById("btnBackToTable");
+            backBtn.style.display = "inline-block";
+
+            // ⭐ เปลี่ยน badge ให้เป็นสีฟ้า
+            const badge = document.querySelector(".badge");
+            if (badge) {
+                badge.textContent = "โต๊ะ " + tableId;
+                badge.style.background = "#2563eb";
+                badge.style.color = "white";
+            }
+        }
+    })();
 </script>
 
 </body>
