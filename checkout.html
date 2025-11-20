@@ -16,6 +16,8 @@
         <div class="nav">
             <a href="cashier.html"><button class="btn btn-outline btn-sm">← กลับไปแก้ไข</button></a>
         </div>
+<!--        <button class="btn btn-outline btn-sm" id="btnLogout">ออกจากระบบ</button>-->
+
     </header>
 
 
@@ -88,9 +90,16 @@
     </section>
 </div>
 
+<!--<script src="auth.js"></script>-->
 <script src="app.js"></script>
 <script src="orders.js"></script>
 <script src="checkout.js"></script>
+<script>
+    document.getElementById("btnLogout")?.addEventListener("click", function () {
+        localStorage.removeItem("pos_logged_in");
+        window.location.href = "login.html";
+    });
+</script>
 
 </body>
 </html>

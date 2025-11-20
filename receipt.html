@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ใบเสร็จ</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .receipt {
+            max-width: 380px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            font-size: 14px;
+        }
+        .receipt-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .receipt-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        table {
+            width: 100%;
+            margin-top: 12px;
+        }
+        table td {
+            padding: 4px 0;
+        }
+        .right {
+            text-align: right;
+        }
+        @media print {
+            #printBtn { display: none; }
+            body { background: white; }
+            .receipt { box-shadow: none; margin: 0; width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="receipt" id="receiptBox">
+    <div class="receipt-header">
+        <div class="receipt-title">ใบเสร็จ / Receipt</div>
+        <div id="receiptDate"></div>
+        <div id="receiptOrderNo"></div>
+    </div>
+
+    <table id="receiptItems"></table>
+
+    <hr style="margin: 14px 0;">
+
+    <div style="display: flex; justify-content: space-between;">
+        <div><strong>รวมทั้งหมด</strong></div>
+        <div id="receiptTotal"><strong>฿0</strong></div>
+    </div>
+
+    <hr style="margin: 14px 0;">
+
+    <div><strong>วิธีชำระเงิน:</strong> <span id="receiptPayment"></span></div>
+</div>
+
+<div style="text-align:center; margin-top:20px;">
+
+    <button id="printBtn" class="btn btn-primary" onclick="window.print()">
+        พิมพ์ใบเสร็จ
+    </button>
+
+    <button class="btn btn-outline" onclick="window.location.href='cashier.html'">
+        กลับไปหน้าขาย
+    </button>
+
+</div>
+
+
+<script src="app.js"></script>
+<script src="orders.js"></script>
+
+<script>
+    (function() {
+        const lastId = Number(localStorage.getItem("pos_last_order_id"));
+        const orders = OrderStore.getAll();
+
+        // หาออเดอร์จาก id ล่าสุด
+        const order = orders.find(o => Number(o.id) === lastId);
+
+        if (!order) {
+            alert("ไม่พบข้อมูลใบเสร็จ");
+            window.location.href = "cashier.html";
+            return;
+        }
+
+        // แสดงข้อมูลบนใบเสร็จ
+        document.getElementById("receiptOrderNo").textContent = "Order #" + order.orderNo;
+        document.getElementById("receiptDate").textContent = new Date(order.createdAt).toLocaleString("th-TH");
+
+        const paymentText = {
+            cash: "เงินสด",
+            qr: "QR PromptPay",
+            card: "บัตรเครดิต/เดบิต",
+            transfer: "โอนเงิน"
+        };
+
+        document.getElementById("receiptPayment").textContent =
+            paymentText[order.paymentMethod] || order.paymentMethod;
+
+        const tbody = document.getElementById("receiptItems");
+        let total = 0;
+
+        order.items.forEach(i => {
+            const sum = i.qty * i.price;
+            total += sum;
+
+            const row = `
+      <tr>
+        <td>${i.name} x${i.qty}</td>
+        <td class="right">฿${sum.toLocaleString()}</td>
+      </tr>
+    `;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById("receiptTotal").textContent = "฿" + total.toLocaleString();
+    })();
+</script>
+
+
+</body>
+</html>

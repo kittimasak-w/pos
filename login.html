@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เข้าสู่ระบบ - Demo POS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="app" style="max-width: 420px; margin: 0 auto; padding-top: 80px;">
+
+    <div class="card" style="padding: 28px;">
+        <div class="title" style="font-size: 22px; margin-bottom: 4px;">
+            เข้าสู่ระบบ
+        </div>
+        <div class="card-subtitle" style="margin-bottom: 16px;">
+            กรุณากรอกชื่อผู้ใช้และรหัสผ่าน
+        </div>
+
+        <div class="input-wrapper">
+            <input type="text" id="username" placeholder="ชื่อผู้ใช้">
+        </div>
+
+
+        <div class="input-wrapper">
+            <input type="password" id="password" placeholder="รหัสผ่าน">
+        </div>
+
+
+        <button class="btn btn-primary" id="btnLogin" style="width: 100%;">
+            เข้าสู่ระบบ
+        </button>
+
+        <div id="loginError" class="text-muted" style="margin-top: 12px; color: red; display:none;">
+            ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
+        </div>
+    </div>
+
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>

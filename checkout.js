@@ -46,18 +46,20 @@
         const isPaid = document.getElementById("isPaidFinal").checked;
 
         // บันทึกจริงลง OrderStore
-        OrderStore.add({
+        const newOrder = OrderStore.add({
             items: pendingOrder.items,
             paymentMethod: method,
             isPaid: isPaid
         });
 
+
         // ลบ pending order
         localStorage.removeItem("pendingOrder");
 
-        alert("บันทึกออเดอร์สำเร็จ!");
+        // เก็บ orderNo ล่าสุดไว้ใช้กับใบเสร็จ
+        localStorage.setItem("pos_last_order_id", newOrder.id);
 
-        window.location.href = "cashier.html";
+        window.location.href = "success.html";
     }
 
 
